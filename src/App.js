@@ -6,7 +6,8 @@ import './App.css';
 import initializeAuthentication from './Firebase/firebase.initialize';
 initializeAuthentication()
 function App() {
-  const [user,setUser] = useState([])
+  const [user,setUser] = useState({})
+  // const [gituser,setGitUser] = useState({})
   const googleProvider = new GoogleAuthProvider();
   const githubProvider = new GithubAuthProvider();
   const auth = getAuth();
@@ -28,8 +29,14 @@ function App() {
   const handleGithubAuthentication=()=>{
     signInWithPopup(auth, githubProvider)
     .then(result=>{
-      const user = result.user;
-      console.log(user);
+      const {displayName,photoURL,email} = result.user;
+      const loginInfo={
+        name: displayName,
+        email: email,
+        photo: photoURL
+      }
+      setUser(loginInfo)
+      // console.log(user);
     })
 
   }
@@ -39,12 +46,13 @@ function App() {
       <button onClick={handleGoogleAuthentication}>Sign in With Google</button>
       <button onClick={handleGithubAuthentication}>Sign in With Github</button>
       {
-        <div>
+        user.name && <div>
           <h6>{user.name}</h6>
           <p>{user.email}</p>
           <img src={user.photo} alt="" />
         </div>
       }
+      
     </div>
   );
 }
